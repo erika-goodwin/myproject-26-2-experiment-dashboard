@@ -14,7 +14,7 @@ The site will be fully responsive, fast, and designed with a minimal, profession
 
 I built this application to deepen my backend experience while showcasing the parts of CRO and product experimentation work that are usually invisible.
 The project combines a full-stack experimentation dashboard with a custom event-tracking pipeline, allowing experiments to be created, users to be assigned to variants, and results to be calculated from raw behavioral data.
-The goal was not to build a polished analytics platform, but to demonstrate how frontend, backend, and data collection work together in real product environments — including event instrumentation, backend validation, and analytics-driven decision making.
+The goal was not to build a polished analytics platform, but to demonstrate how frontend, backend, and data collection work together in real product environments, including event instrumentation, backend validation, and analytics-driven decision making.
 
 ### Core Features
 

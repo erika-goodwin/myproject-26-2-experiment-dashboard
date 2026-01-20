@@ -1,7 +1,7 @@
 ## Experiment Dashboard / CRO Dashboard 
 _A/B testing? Tracking clicks and conversions? No problem!_
 
-<img width="1536" height="1024" alt="ChatGPT Image Jan 20, 2026, 09_34_35 AM" src="https://github.com/user-attachments/assets/5bf417b6-011a-4184-a75b-44f24473e236" />
+<img width="1536" height="1024" alt="Mockup Example" src="https://github.com/user-attachments/assets/5bf417b6-011a-4184-a75b-44f24473e236" />
 
 A lightweight experimentation and feature-flag dashboard that allows product teams to create experiments, track user behavior via a custom event pipeline, and analyze results to support data-driven product decisions.
 The site will be fully responsive, fast, and designed with a minimal, professional aesthetic.

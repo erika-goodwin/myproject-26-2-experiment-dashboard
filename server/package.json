@@ -6,8 +6,9 @@
     "lint": "eslint 'src/**/*.{ts,js}'",
     "format": "prettier --write .",
     "test": "jest --watch",
-    "dev": "nodemon"
+    "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.9",
+    "@types/pg": "^8.16.0",
     "@typescript-eslint/eslint-plugin": "^8.53.1",
     "@typescript-eslint/parser": "^8.53.1",
     "eslint": "^9.39.2",
@@ -26,9 +28,13 @@
     "prettier": "^3.8.0",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "pg": "^8.17.2",
+    "postgres": "^3.4.8"
   }
 }

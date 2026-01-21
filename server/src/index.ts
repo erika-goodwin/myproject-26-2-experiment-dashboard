@@ -2,7 +2,8 @@ import "dotenv/config";
 import express from "express";
 import type { Application, Request, Response } from "express";
 import { connectDB } from "./db/index.js";
-import experiments_route from './routes/experiments_route.js'
+import experiments_route from './routes/experiments_route.js';
+import auth_route from './routes/auth_route.js';
 
 
 const app: Application = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Routes
 app.use('/experiments', experiments_route);
+app.use('/auth', auth_route);
 
 // Database
 await connectDB();

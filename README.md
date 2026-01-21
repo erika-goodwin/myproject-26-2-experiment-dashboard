@@ -6,7 +6,7 @@ _A/B testing? Tracking clicks and conversions? No problem!_
 A lightweight experimentation and feature-flag dashboard that allows product teams to create experiments, track user behavior via a custom event pipeline, and analyze results to support data-driven product decisions.
 The site will be fully responsive, fast, and designed with a minimal, professional aesthetic.
 
-- **Tech Stack:** React, Vite, TypeScript, Tailwind CSS / Node.js, Express, REST APIs / PostgreSQL
+- **Tech Stack:** React, Vite, TypeScript, Tailwind CSS / Node.js, Express, REST APIs / PostgreSQL / Supabase
 
 - **Check App:** Currently Building
 

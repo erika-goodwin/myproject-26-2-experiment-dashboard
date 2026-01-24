@@ -7,9 +7,13 @@ import {
 // import { validate as idUUID } from "uuid";
 
 export async function getExperiments(req: Request, res: Response) {
-  const result = await pool.query("SELECT * FROM experiments");
-
-  res.json(result.rows);
+  try {
+    const result = await pool.query("SELECT * FROM experiments");
+    res.json(result.rows);
+  } catch (error) {
+    console.error("DB error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }
 
 export async function getExperimentWithId(req: Request, res: Response) {
@@ -68,10 +72,16 @@ export async function putExperiments(req: Request, res: Response) {
 
   const { name, description, status } = parsed.data;
   const experimentId = req.params.experimentId;
+  const currentTimeStamp = new Date();
+
+  //   console.log(">>>> currentTimeStamp:", currentTimeStamp);
 
   const fields = [];
   const values = [];
   let index = 1;
+
+  fields.push(`updated_at = $${index++}`);
+  values.push(currentTimeStamp);
 
   if (name) {
     fields.push(`name = $${index++}`);
@@ -105,6 +115,31 @@ export async function putExperiments(req: Request, res: Response) {
     //   "UPDATE experiments SET name = $1, description = $2, status = $3 WHERE id = $4",
     //   [name, description, status, experimentId],
     // );
+  } catch (error) {
+    console.error("DB error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function deleteExperiments(req: Request, res: Response) {
+  const experimentId = req.params.experimentId;
+  console.log(">>>> experimentId:", experimentId);
+
+  try {
+    const result = await pool.query("SELECT * FROM experiments WHERE id = $1", [
+      experimentId,
+    ]);
+    const experimentData = result.rows[0];
+
+    if (!experimentData) {
+      return res.status(404).json({ message: "Experiment not found" });
+    }
+
+    await pool.query("DELETE FROM experiments WHERE id = $1", [
+      experimentData.id,
+    ]);
+
+    res.status(201).json({ message: "Item Deleted" });
   } catch (error) {
     console.error("DB error:", error);
     res.status(500).json({ message: "Internal Server Error" });

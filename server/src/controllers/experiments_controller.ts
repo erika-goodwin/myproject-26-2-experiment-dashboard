@@ -1,5 +1,9 @@
 import type { Request, Response } from "express";
 import { pool } from "../db/index.js";
+import {
+  experimentCreateSchema,
+  experimentUpdateSchema,
+} from "../validators/experiment_schema.js";
 // import { validate as idUUID } from "uuid";
 
 export async function getExperiments(req: Request, res: Response) {
@@ -30,11 +34,19 @@ export async function getExperimentWithId(req: Request, res: Response) {
 }
 
 export async function postExperiments(req: Request, res: Response) {
-  const { name, description, status } = req.body;
-
-  if (!name) {
-    return res.status(401).json({ message: "Title is needed!" });
+  // Parsing Data
+  const parsed = experimentCreateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res
+      .status(400)
+      .json({ message: "Invalid Input", errors: parsed.error.format() });
   }
+
+  const { name, description, status } = parsed.data;
+
+  //   if (!name) {
+  //     return res.status(401).json({ message: "Title is needed!" });
+  //   }
 
   await pool.query(
     "INSERT INTO experiments (name, description, status) VALUES ($1, $2, $3)",
@@ -45,7 +57,16 @@ export async function postExperiments(req: Request, res: Response) {
 }
 
 export async function putExperiments(req: Request, res: Response) {
-  const { name, description, status } = req.body;
+  const parsed = experimentUpdateSchema.safeParse(req.body);
+  //   console.log(">>>> HERE WE GO:", parsed);
+
+  if (!parsed.success) {
+    return res
+      .status(400)
+      .json({ message: "Invalid Input", errors: parsed.error.format() });
+  }
+
+  const { name, description, status } = parsed.data;
   const experimentId = req.params.experimentId;
 
   const fields = [];

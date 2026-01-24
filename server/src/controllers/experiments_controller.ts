@@ -1,9 +1,91 @@
 import type { Request, Response } from "express";
 import { pool } from "../db/index.js";
+// import { validate as idUUID } from "uuid";
 
-export async function getExperiments (req: Request, res: Response){
-    const result = await pool.query("SELECT * FROM experiments");
+export async function getExperiments(req: Request, res: Response) {
+  const result = await pool.query("SELECT * FROM experiments");
 
-    // res.send("Hello, TypeScript + Express!");
-    res.json(result.rows);
+  res.json(result.rows);
+}
+
+export async function getExperimentWithId(req: Request, res: Response) {
+  const experimentId = req.params.experimentId;
+
+  try {
+    const result = await pool.query("SELECT * FROM experiments WHERE id = $1", [
+      experimentId,
+    ]);
+
+    const experimentData = result.rows[0];
+    if (!experimentData) {
+      return res.status(404).json({ message: "Experiment not found" });
+    }
+
+    // console.log("👉 Data/result:", experimentData);
+    res.json(experimentData);
+  } catch (error) {
+    console.error("DB error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function postExperiments(req: Request, res: Response) {
+  const { name, description, status } = req.body;
+
+  if (!name) {
+    return res.status(401).json({ message: "Title is needed!" });
+  }
+
+  await pool.query(
+    "INSERT INTO experiments (name, description, status) VALUES ($1, $2, $3)",
+    [name, description, status],
+  );
+
+  res.status(201).json({ message: "New experiment Created" });
+}
+
+export async function putExperiments(req: Request, res: Response) {
+  const { name, description, status } = req.body;
+  const experimentId = req.params.experimentId;
+
+  const fields = [];
+  const values = [];
+  let index = 1;
+
+  if (name) {
+    fields.push(`name = $${index++}`);
+    values.push(name);
+  }
+  if (description) {
+    fields.push(`description = $${index++}`);
+    values.push(description);
+  }
+  if (status) {
+    fields.push(`status = $${index++}`);
+    values.push(status);
+  }
+
+  values.push(experimentId);
+
+  //   console.log("👉 fields:", fields);
+  //   console.log("👉 values:", values);
+  //   console.log("👉 index:", index);
+
+  const sql = `UPDATE experiments SET ${fields.join(", ")} WHERE id = $${index}`;
+
+  //   console.log("👉 putExperiments !!!!!!, sql:", sql);
+  //   console.log("👉 putExperiments !!!!!!values:", values);
+
+  try {
+    await pool.query(sql, values);
+    res.status(201).json({ message: "Experiment updated" });
+
+    // await pool.query(
+    //   "UPDATE experiments SET name = $1, description = $2, status = $3 WHERE id = $4",
+    //   [name, description, status, experimentId],
+    // );
+  } catch (error) {
+    console.error("DB error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }

@@ -6,7 +6,7 @@ _A/B testing? Tracking clicks and conversions? No problem!_
 A lightweight experimentation and feature-flag dashboard that allows product teams to create experiments, track user behavior via a custom event pipeline, and analyze results to support data-driven product decisions.
 The site will be fully responsive, fast, and designed with a minimal, professional aesthetic.
 
-- **Tech Stack:** React, Vite, TypeScript, Tailwind CSS / Node.js, Express, REST APIs / PostgreSQL / Supabase
+- **Tech Stack:** React, Vite, TypeScript, Tailwind CSS / Node.js, Express, REST APIs / PostgreSQL, Supabase
 
 - **Check App:** Currently Building
 
@@ -38,7 +38,13 @@ The goal was not to build a polished analytics platform, but to demonstrate how 
 - Real Payment
 - Data Privacy / Compliance system
 
-
+### Progress 
+- Data Model Planning (Experiments, Variants, Assignments, Events, Users)
+- Backend set up (Node.js, Express, Supabase/PostgreSQL)
+- [B] Auth/User CRUD API (GET, POST)
+- [B] Experiments CRUD API (GET, POST, PUT, DELETE)
+- [B] Authentication / Access control (Auth Middleware)
+- Variant Assignment & Event Tracking <= Right here right now
 
 
 

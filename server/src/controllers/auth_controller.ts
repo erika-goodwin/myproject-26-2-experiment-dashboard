@@ -4,9 +4,9 @@ import bcrypt from "bcrypt";
 import jwt, { type SignOptions, StringValue } from "jsonwebtoken";
 import { userSchema } from "../validators/user_schema.js";
 
-console.log("👉 auth/resister Controller");
+// console.log("👉 auth/resister Controller");
 export async function register(req: Request, res: Response) {
-  console.log("👉 register hit");
+//   console.log("👉 register hit");
 
   const parsed = userSchema.safeParse(req.body);
   if (!parsed.success) {

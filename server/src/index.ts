@@ -2,9 +2,10 @@ import "dotenv/config";
 import express from "express";
 import type { Application, Request, Response } from "express";
 import { connectDB } from "./db/index.js";
-import experiments_route from './routes/experiments_route.js';
-import auth_route from './routes/auth_route.js';
-
+import experiments_route from "./routes/experiments_route.js";
+import auth_route from "./routes/auth_route.js";
+import results_route from "./routes/results_route.js";
+import variants_route from "./routes/variants_route.js";
 
 const app: Application = express();
 const PORT = 3000;
@@ -13,27 +14,23 @@ const PORT = 3000;
 app.use(express.json());
 
 // Routes
-app.use('/experiments', experiments_route);
-app.use('/auth', auth_route);
+app.use("/experiments", experiments_route);
+app.use("/auth", auth_route);
+app.use("/variants", variants_route);
+app.use("/result", results_route);
 
 // Database
 await connectDB();
-
 
 // Examples
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript + Express!");
 });
-app.post('/', (req, res) => {
-  res.send('Got a POST request!!!')
-})
 
-// Server Start!! 
+// Server Start!!
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
-
 
 // app.post('/', (req, res) => {
 //   res.send('Got a POST request')
@@ -57,4 +54,3 @@ app.listen(PORT, () => {
 // >> load the files that are in the public directory:
 // http://localhost:3000/images/kitten.jpg
 // http://localhost:3000/css/style.css
-

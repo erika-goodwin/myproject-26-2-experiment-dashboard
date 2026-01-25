@@ -8,7 +8,7 @@ import {
 
 export async function getExperiments(req: Request, res: Response) {pool
   try {
-    const result = await .query("SELECT * FROM experiments");
+    const result = await pool.query("SELECT * FROM experiments");
     res.json(result.rows);
   } catch (error) {
     console.error("DB error:", error);

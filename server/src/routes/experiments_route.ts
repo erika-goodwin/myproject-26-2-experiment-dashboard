@@ -1,5 +1,4 @@
 import { Router } from "express";
-// import { authenticateJWT } from "../middleware/auth.middleware.js";
 import {
   deleteExperiments,
   getExperiments,
@@ -11,7 +10,6 @@ import { authenticateJWT } from "../middleware/auth_middleware.js";
 
 const router = Router();
 
-// router.get('/', getExperiments);
 router.get("/", authenticateJWT, getExperiments);
 router.get("/:experimentId", authenticateJWT, getExperimentId);
 router.put("/:experimentId", authenticateJWT, putExperiments);

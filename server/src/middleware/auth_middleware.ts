@@ -7,7 +7,6 @@ export function authenticateJWT(
   next: NextFunction,
 ) {
   //   console.log("👉 authenticateJWT | headers:", req.headers.authorization);
-
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ message: "Missing Auth token" });

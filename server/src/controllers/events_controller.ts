@@ -1,14 +1,10 @@
 import type { Request, Response } from "express";
 import { getExperimentById } from "../services/experiments_service.js";
-import {
-  getVariantsByExperimentIdAndId,
-  getVariantsById,
-} from "../services/variants_cervise.js";
+import { getVariantsByExperimentIdAndId } from "../services/variants_service.js";
 import { eventCreateSchema } from "../validators/event_schema.js";
 import { createEvent } from "../services/events_service.js";
 
 export async function postEvents(req: Request, res: Response) {
-  console.log("🍊 postEvents", req.body);
   try {
     // Check event_type
     const parsed = eventCreateSchema.safeParse(req.body);
@@ -23,7 +19,6 @@ export async function postEvents(req: Request, res: Response) {
 
     // Experiment exist?
     const experimentData = await getExperimentById(experiments_id);
-    // console.log("🍊 experimentData", experimentData);
     if (experimentData === null) {
       return res.status(404).json({ message: "Experiment not found" });
     }
@@ -33,7 +28,6 @@ export async function postEvents(req: Request, res: Response) {
       experiments_id,
       variant_id,
     );
-    // console.log("🍊 variantData", variantData);
     if (variantData.length === 0) {
       return res
         .status(400)

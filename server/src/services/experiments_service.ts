@@ -1,7 +1,9 @@
 import { pool } from "../db/index.js";
 
 export async function getAllExperiments() {
-  const result = await pool.query("SELECT * FROM experiments");
+  const result = await pool.query(
+    "SELECT * FROM experiments ORDER BY created_at",
+  );
   return result.rows;
 }
 

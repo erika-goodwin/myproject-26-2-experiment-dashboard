@@ -5,6 +5,13 @@ export async function getAllVariants() {
   return result.rows;
 }
 
+export async function getVariantsById(variantId: string) {
+  const result = await pool.query("SELECT * FROM variants WHERE id = $1", [
+    variantId,
+  ]);
+
+  return result.rows ?? null;
+}
 export async function getVariantsByExperimentId(experimentId: string) {
   const result = await pool.query(
     "SELECT * FROM variants WHERE experiments_id = $1 ORDER BY name",

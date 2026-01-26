@@ -4,7 +4,7 @@ import type { Application, Request, Response } from "express";
 import { connectDB } from "./db/index.js";
 import experiments_route from "./routes/experiments_route.js";
 import auth_route from "./routes/auth_route.js";
-import results_route from "./routes/results_route.js";
+import results_route from "./routes/result_route.js";
 import variants_route from "./routes/variants_route.js";
 
 const app: Application = express();

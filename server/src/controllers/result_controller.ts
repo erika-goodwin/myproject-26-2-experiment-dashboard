@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { randomBytes } from "node:crypto";
 import { pool } from "../db/index.js";
 import { getAllExperiments } from "../services/experiments_service.js";
-import { getVariantsByExperimentId } from "../services/variants_route.js";
+import { getVariantsByExperimentId } from "../services/variants_cervise.js";
 import {
   createAssignment,
   getAssignmentsByExperimentId,

@@ -20,6 +20,17 @@ export async function getVariantsByExperimentId(experimentId: string) {
 
   return result.rows ?? null;
 }
+export async function getVariantsByExperimentIdAndId(
+  experimentId: string,
+  variantId: string,
+) {
+  const result = await pool.query(
+    "SELECT * FROM variants WHERE experiments_id = $1 AND id = $2 ORDER BY name",
+    [experimentId, variantId],
+  );
+
+  return result.rows ?? null;
+}
 
 export async function createVariants(experiments_id: string, names: string[]) {
   //   await pool.query(

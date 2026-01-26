@@ -4,8 +4,7 @@ import {
   deleteByExperimentId,
   getAllVariants,
   getVariantsByExperimentId,
-} from "../services/variants_route.js";
-
+} from "../services/variants_cervise.js";
 
 export async function getVariants(req: Request, res: Response) {
   try {

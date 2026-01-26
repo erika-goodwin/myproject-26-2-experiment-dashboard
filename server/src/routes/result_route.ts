@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getStatus, putAssignments } from "../controllers/result_controller.js";
+import { getStatus } from "../controllers/result_controller.js";
 
 const router = Router();
 

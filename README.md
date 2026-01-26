@@ -38,14 +38,15 @@ The goal was not to build a polished analytics platform, but to demonstrate how 
 - Real Payment
 - Data Privacy / Compliance system
 
-### Progress atm
- - ✅ Data Model Planning (Experiments, Variants, Assignments, Events, Users) 
- - ✅ Backend set up (Node.js, Express, Supabase/PostgreSQL)
- - ✅ [B] Auth/User CRUD API (GET, POST)
- - ✅ [B] Experiments CRUD API (GET, POST, PUT, DELETE)
- - ✅ [B] Authentication / Access control (Auth Middleware)
- - ✅ [B] Variant Assignment Logic 
- - ***Event Tracking 👈 Right here right now***
+   ### Progress atm [40%]
+  - ✅ Data Model Planning (Experiments, Variants, Assignments, Events, Users) 
+  - ✅ Backend set up (Node.js, Express, Supabase/PostgreSQL)
+  - ✅ [B] Auth/User CRUD API (GET, POST)
+  - ✅ [B] Experiments CRUD API (GET, POST, PUT, DELETE)
+  - ✅ [B] Authentication / Access control (Auth Middleware)
+  - ✅ [B] Variant Assignment Logic / Variants API (GET, POST, DELETE)
+  - ✅ [B] Event Tracking / events API (POST)
+  - ***Frontend Foundations 👈 Right here right now***
 
 
 

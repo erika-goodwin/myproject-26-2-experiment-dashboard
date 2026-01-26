@@ -2,10 +2,7 @@ import type { Request, Response } from "express";
 import { randomBytes } from "node:crypto";
 import { pool } from "../db/index.js";
 import { getAllExperiments } from "../services/experiments_service.js";
-import {
-  getVariantsByExperimentId,
-  getVariantsById,
-} from "../services/variants_route.js";
+import { getVariantsByExperimentId } from "../services/variants_route.js";
 import {
   createAssignment,
   getAssignmentsByExperimentId,
@@ -20,84 +17,41 @@ function pickVariantByWeight(
   variantsList: Variant[],
   assignments: Assignment[],
 ) {
-  console.log("👈 assignments:", assignments);
   const totalAssignments = assignments.length || 1;
-  console.log("👈 totalAssignments:", totalAssignments);
 
   const actualCount: Record<string, number> = {}; // {id: number, id:number, ...}
   for (const variant of variantsList) {
     actualCount[variant.id] = 0;
   }
 
-  console.log("👈 actualCount1:", actualCount);
-
   for (const assignment of assignments) {
     if (actualCount[assignment.variant_id] !== undefined) {
       actualCount[assignment.variant_id]++;
     }
   }
-
   console.log("👈 actualCount2:", actualCount);
 
   let bestVariant: Variant | null = null;
   let maxDeficit = -Infinity;
-  console.log("👈 maxDeficit:", maxDeficit);
 
   for (const variant of variantsList) {
-    console.log("👈 for loop | variant:", variant.name);
     const expectedRate = totalAssignments * (Number(variant.weight) / 100);
-    console.log("👈 for loop | expected:", expectedRate);
 
     const actualRate = actualCount[variant.id] || 0;
-    console.log("👈 for loop | actualRate:", actualRate);
+
     const deficit = expectedRate - actualRate;
-    console.log("👈 for loop | deficit:", deficit);
 
     if (deficit > maxDeficit) {
-      console.log("👈 for loop | condition: deficit > maxDeficit");
       maxDeficit = deficit;
       bestVariant = variant;
-
-      console.log(
-        "👈 for loop | condition: deficit > maxDeficit | maxDeficit:",
-        maxDeficit,
-      );
-      console.log(
-        "👈 for loop | condition: deficit > maxDeficit | bestVariant:",
-        bestVariant,
-      );
     }
   }
 
   if (!bestVariant) {
-    // throw new Error("Failed to resolve variant");
     console.error("Failed to resolve variant");
   }
 
   return bestVariant!;
-
-  // const totalWeight = variantsList.reduce(
-  //   (sum, v) => sum + Number(v.weight),
-  //   0,
-  // );
-
-  // console.log("👈 totalWeight:", totalWeight); //99.99 100
-
-  // const random = Math.random() * totalWeight; //22.71370354664802
-  // console.log("👈 random:", random);
-
-  // let cumulative = 0;
-  // for (const variant of variantsList) {
-  //   console.log("👈 FOR LOOP", variant);
-  //   cumulative += Number(variant.weight);
-  //   console.log("👈 FOR LOOP | cumulative:", cumulative);
-  //   if (random <= cumulative) {
-  //     console.log("👈 FOR LOOP | IF | ", variant);
-  //     return variant;
-  //   }
-  // }
-
-  // return variantsList[variantsList.length - 1];
 }
 
 // ⚠️ NEED A RULE
@@ -108,9 +62,9 @@ export async function getStatus(req: Request, res: Response) {
     // -> (Exist anonymousId : check the storage on FrontEnd.)
 
     // Generate a New user
-    const anonymousId = generateAnonymousId(); // this should come with request normally
+    // const anonymousId = generateAnonymousId(); // this should come with request normally
     // Existing scenario ✌️
-    // const anonymousId = "+ZWfUQi/TqEgy9LGT/Z/5";
+    const anonymousId = "+ZWfUQi/TqEgy9LGT/Z/5";
 
     console.log("👍 anonymousId:", anonymousId);
     // 🛑 Later : Read this from cookie/header
@@ -122,92 +76,190 @@ export async function getStatus(req: Request, res: Response) {
 
     console.log("👍 experimentList:", experimentList);
 
-    // 🛑 LOOP HERE
-    const experiment = experimentList[0];
-    const experimentId = experiment.id;
-    console.log("👍 experiment:", experiment);
+    const resultsOfAll: {
+      experiment_id: string;
+      isExist: boolean;
+      status?: string;
+      variant?: string;
+      variant_id?: string;
+    }[] = [];
 
-    // (3) check if assignment already exists
-    const assignments = await pool.query(
-      "SELECT * FROM assignments WHERE anonymous_id = $1",
-      [anonymousId],
-    );
+    for (const experiment of experimentList) {
+      console.log("🛑 LOOP HERE");
+      // 🛑 LOOP HERE
+      // const experiment = experimentList[0];
+      const experimentId = experiment.id;
+      console.log("👍 experimentId:", experimentId);
 
-    console.log(
-      "👍 assignments:",
-      assignments.rows,
-      assignments.rows.length !== 0,
-    );
+      // (3) check if assignment already exists
+      const assignments = await pool.query(
+        "SELECT * FROM assignments WHERE anonymous_id = $1 AND experiments_id = $2",
+        [anonymousId, experimentId],
+      );
 
-    // anonymous
-    // (4) > YES : return
-    if (assignments.rows.length !== 0) {
-      const assignedVariantData = assignments.rows[0];
-      const variantId = assignedVariantData.variant_id;
+      console.log("👑 assignments:", assignments.rows);
 
-      console.log("✋ user already exist!!!!! | variantId:", variantId);
+      // anonymous
+      // (4) > YES : return
+      if (assignments.rows.length !== 0) {
+        const assignedVariantData = assignments.rows[0];
+        const variantId = assignedVariantData.variant_id;
 
-      // const resultVariantData = await getVariantsById(variantId);
+        console.log("✋✋✋ user already assigned", experiment);
 
-      // console.log("🙌 resultVariantData:", resultVariantData);
-      // // return res.status(400).json({message: })
+        const status = {
+          experiment_id: experimentId,
+          isExist: true,
+          // status: "paused",
+          // variant: "control",
+          variant_id: variantId,
+        };
 
-      return res.json({ variant_id: variantId });
+        resultsOfAll.push(status);
+
+        console.log("✅ return1️⃣ : status", status);
+
+        continue;
+        // return res.json({ variant_id: variantId });
+      }
+
+      // (4) > NO : check an experiment status
+      console.log("👌 User is NOT exist YET");
+      const isRunning = experiment.status === "running";
+
+      console.log("🏃‍♂️ Status is running ?", isRunning);
+
+      // (5) >> NOT [Running] : return default (control)
+      // (5) >> [Running] : proceeds
+      if (!isRunning) {
+        // What should I return here???
+        console.log("✋ Experiment is not running");
+
+        const status = {
+          experiment_id: experimentId,
+          isExist: false,
+          status: experiment.status,
+          variant: "control",
+          // variant_id: variantId,
+        };
+
+        resultsOfAll.push(status);
+
+        console.log("✅ return 2️⃣ : status", status);
+
+        continue;
+        // return res.json({
+        //   experiment_id: experimentId,
+        //   status: experiment.status,
+        //   variant: "control",
+        // });
+      }
+
+      // (6) Assign variant : Use number → modulo → variant index
+      console.log("👌 experimentId:", experimentId);
+
+      const variantsList = await getVariantsByExperimentId(experimentId);
+      const assignmentsList = await getAssignmentsByExperimentId(experimentId);
+
+      // console.log("👌 variantsList:", variantsList);
+      // console.log("👌 assignmentsList:", assignmentsList);
+
+      const assigningVariant = pickVariantByWeight(
+        variantsList,
+        assignmentsList,
+      );
+      console.log("👌 assigningVariant:", assigningVariant);
+
+      if (!assigningVariant) {
+        res.status(400).json({ message: "assigning variant couldn't find." });
+      }
+
+      // const assignment = {
+      //   experiments_id: experiment.id,
+      //   anonymous_id: anonymousId,
+      //   variant_id: assigningVariant.id,
+      // };
+
+      // console.log("✨ assignment", {
+      //   experiments_id: experimentId,
+      //   anonymous_id: anonymousId,
+      //   variant_id: assigningVariant.id,
+      // });
+
+      const status = {
+        experiment_id: experimentId,
+        isExist: false,
+        status: experiment.status,
+        variant: assigningVariant.name,
+        variant_id: assigningVariant.id,
+      };
+
+      resultsOfAll.push(status);
+
+      console.log("✅ return 3️⃣ : status", status);
+      continue;
+
+      // (7) Insert to the table
+      // await createAssignment(experiment.id, anonymousId, assigningVariant.id);
     }
 
-    // (4) > NO : check an experiment status
-    console.log("👌 User is NOT exist YET");
-    const isRunning = experiment.status === "running";
-
-    console.log("🏃‍♂️ Status is running ?", isRunning);
-
-    // (5) >> NOT [Running] : return default (control)
-    if (!isRunning) {
-      // What should I return here???
-      console.log("✋ Experiment is not running");
-      // return res.json({variant});
-    }
-    // (5) >> [Running] : proceeds
-
-    // (6) Assign variant : Use number → modulo → variant index
-    console.log("👌 experimentId:", experimentId);
-    // const variantsList = await pool.query(
-    //   "SELECT * FROM variants WHERE experiments_id = $1 ORDER BY name",
-    //   [experimentId],
-    // );
-    const variantsList = await getVariantsByExperimentId(experimentId);
-    const assignmentsList = await getAssignmentsByExperimentId(experimentId);
-
-    console.log("👌 variantsList:", variantsList);
-    console.log("👌 assignmentsList:", assignmentsList);
-
-    const assigningVariant = pickVariantByWeight(variantsList, assignmentsList);
-    console.log("👌 assigningVariant:", assigningVariant);
-
-    if (!assigningVariant) {
-      res.status(400).json({ message: "assigning variant couldn't find." });
-    }
-
-    // const assignment = {
-    //   experiments_id: experiment.id,
-    //   anonymous_id: anonymousId,
-    //   variant_id: assigningVariant.id,
-    // };
-    console.log("✨ assignment", {
-      experiments_id: experiment.id,
+    const dataToReturn = {
       anonymous_id: anonymousId,
-      variant_id: assigningVariant.id,
-    });
+      assignments: resultsOfAll,
+    };
+    console.log("🌻 all:", dataToReturn);
 
-    // (7) Insert to the table
-    await createAssignment(experiment.id, anonymousId, assigningVariant.id);
-
-    res.status(201).json({ message: "New assignment Created" });
+    res.json(dataToReturn);
   } catch (error) {
     console.error("DB error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+// ==== RETURN OF getStatus =====
+// 🌻 all: {
+//   anonymous_id: 'yehVLcwqmeHWFzsn0Kpa4',
+//   assigments: [
+//     {
+//       experiment_id: '44fef021-8364-4dd9-9ee1-ed4c20226fa5',
+//       isExist: false,
+//       status: 'running',
+//       variant: 'running',
+//       variant_id: 'c0f37e2a-a47d-42e3-b9c6-4bb7314e11a6'
+//     },
+//     {
+//       experiment_id: '88d6dc0c-7144-4e9d-8bf6-ed80d09e3cfd',
+//       isExist: false,
+//       status: 'running',
+//       variant: 'running',
+//       variant_id: 'b4fe754c-2257-4fd6-bee3-ea640cce8990'
+//     },
+//     {
+//       experiment_id: '94200ad9-b963-458a-9c89-d51ae105ee65',
+//       isExist: false,
+//       status: 'draft',
+//       variant: 'control'
+//     },
+//     {
+//       experiment_id: '7fffdf88-013b-4e19-be14-00bfa71537a9',
+//       isExist: false,
+//       status: 'running',
+//       variant: 'running',
+//       variant_id: '837914df-32eb-4098-a4ab-e0bcb2d290e1'
+//     },
+//     {
+//       experiment_id: 'db6fbcdd-5c76-4348-9123-680c5cec1b7b',
+//       isExist: false,
+//       status: 'draft',
+//       variant: 'control'
+//     },
+//     {
+//       experiment_id: '145073f3-0074-4186-9fe6-372f5f995843',
+//       isExist: false,
+//       status: 'draft',
+//       variant: 'control'
+//     }
+//   ]
+// }
 
 export async function getVariation(req: Request, res: Response) {
   res.json({ status: "okay" });

@@ -6,6 +6,6 @@ const router = Router();
 router.post("/login", login);
 router.post("/register", register);
 
-// console.log("👉 auth/resister router");
+console.log("👉 auth/resister router");
 
 export default router;

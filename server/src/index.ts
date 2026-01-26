@@ -8,10 +8,17 @@ import results_route from "./routes/results_route.js";
 import variants_route from "./routes/variants_route.js";
 
 const app: Application = express();
-const PORT = 3000;
+// const PORT = 3000;
+// const PORT = 3333;
+const PORT = Number(process.env.PORT) || 3333;
 
 // Global Middleware
 app.use(express.json());
+
+app.use((req, _res, next) => {
+  console.log("➡️ incoming:", req.method, req.path);
+  next();
+});
 
 // Routes
 app.use("/experiments", experiments_route);
@@ -29,6 +36,8 @@ app.get("/", (req: Request, res: Response) => {
 
 // Server Start!!
 app.listen(PORT, () => {
+  console.log("🔥 EXPRESS PID", process.pid);  // You can do 'kill XXXX'
+  console.log(`🚀 Listening on ${PORT}`);
   console.log(`Server running at http://localhost:${PORT}`);
 });
 

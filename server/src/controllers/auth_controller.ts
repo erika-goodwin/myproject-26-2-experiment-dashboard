@@ -4,9 +4,9 @@ import bcrypt from "bcrypt";
 import jwt, { type SignOptions, StringValue } from "jsonwebtoken";
 import { userSchema } from "../validators/user_schema.js";
 
-// console.log("👉 auth/resister Controller");
+console.log("👉 auth/resister Controller");
 export async function register(req: Request, res: Response) {
-//   console.log("👉 register hit");
+  console.log("👉 register hit");
 
   const parsed = userSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -14,14 +14,14 @@ export async function register(req: Request, res: Response) {
       .status(400)
       .json({ message: "Invalid Input", errors: parsed.error.format() });
   }
-  //   console.log("👉 parsed body:", parsed);
+    console.log("👉 parsed body:", parsed);
 
   const { email, password } = parsed.data ?? {};
 
   const saltRounds = 10;
   const hasedPassword = await bcrypt.hash(password, saltRounds);
 
-  //   console.log("👉 User:", email, password, hasedPassword);
+    console.log("👉 User:", email, password, hasedPassword);
 
   await pool.query("INSERT INTO users (email, password) values ($1, $2)", [
     email,

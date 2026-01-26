@@ -3,7 +3,7 @@ import { Router } from "express";
 import {
   deleteExperiments,
   getExperiments,
-  getExperimentWithId,
+  getExperimentId,
   postExperiments,
   putExperiments,
 } from "../controllers/experiments_controller.js";
@@ -13,7 +13,7 @@ const router = Router();
 
 // router.get('/', getExperiments);
 router.get("/", authenticateJWT, getExperiments);
-router.get("/:experimentId", authenticateJWT, getExperimentWithId);
+router.get("/:experimentId", authenticateJWT, getExperimentId);
 router.put("/:experimentId", authenticateJWT, putExperiments);
 router.post("/", authenticateJWT, postExperiments);
 router.delete("/:experimentId", authenticateJWT, deleteExperiments);

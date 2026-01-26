@@ -44,7 +44,8 @@ The goal was not to build a polished analytics platform, but to demonstrate how 
  - ✅ [B] Auth/User CRUD API (GET, POST)
  - ✅ [B] Experiments CRUD API (GET, POST, PUT, DELETE)
  - ✅ [B] Authentication / Access control (Auth Middleware)
- - ***Variant Assignment & Event Tracking 👈 Right here right now***
+ - ✅ [B] Variant Assignment Logic 
+ - ***Event Tracking 👈 Right here right now***
 
 
 
